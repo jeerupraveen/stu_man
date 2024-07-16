@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ADD PROJECT</title>
+    <link rel="stylesheet" href="../css/scrumlogin.css">
+</head>
+<body>
+    <nav>
+        <h1>AST</h1>
+        <ul>
+          <li><a href="../html/ASTproject.html">Home</a></li>
+          <li><a href="../html/scrumlogin.html">Attendance</a></li>
+          <li><a href="#">DailySadhana</a></li>
+          <li class="dropdown">
+            <a href="#">More</a>
+            <ul class="dropdown-content">
+              <li><a href="#">AddProject</a></li>
+              <li><a href="../html/project.html">Projects</a></li>
+              <li><a href="#">ScrumMaster</a></li>
+            </ul>
+          </li>
+        </ul>
+    </nav>
+    <div class="container">
+        <div class="container-login">
+            <h1><i>Project Upload</i></h1><br>
+            <label for="stu-name" class="scr-label">Student Name</label><br/>
+            <input id='stu-name'type="text" placeholder="Name Of The Student" required class="stuName-input"><br>
+            <label for="email" class="scr-label">Gmail</label><br/>
+            <input id='email'type="text" placeholder="Email Of Student" required class="scr-input"><br>
+            <label for="project-name" class=""> ProjectName</label><br>
+            <input type="text" id="project-name" placeholder="ProjectName"><br>
+            <label for="project-Link" class=""> ProjectName</label><br>
+            <input type="text" id="project-Link" placeholder="Your Project Link"><br>
+            <button type="submit" id="uploadBtn">UploadProject</button>
+            <span class="span-div"></span>
+        </div>
+    </div>
+    <script src="../javascript/addProject.js"></script>
+</body>
+</html>

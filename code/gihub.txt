@@ -1,0 +1,115 @@
+gihub:
+https://github.com/tabdeelstudios/blackbucks-iidt-internship-full-stack-may-2024
+
+
+server for creation of schema:
+const express = require('express');
+const { MongoClient } = require('mongodb');
+const path = require('path');
+const cors = require('cors');
+
+const app = express();
+app.use(cors());
+app.use(express.json());
+
+let db;
+async function conToDb(cb) {
+    const url = "mongodb+srv://Pra123veen:Pra123veen@praveen04.higkkwc.mongodb.net/?retryWrites=true&w=majority&appName=Praveen04";
+    const client = new MongoClient(url);
+    await client.connect();
+    db = client.db('praveen');
+    
+    // Ensure indexes are created with unique constraints
+    await db.collection('student').createIndex({ RegisterNumber: 1 }, { unique: true });
+    await db.collection('student').createIndex({ Email: 1 }, { unique: true });
+
+    cb();
+}
+
+app.get('/', (req, res) => {
+    res.json();
+});
+
+app.post('/insertdata', async (req, res) => {
+    try {
+        const result = await db.collection('student').insertOne({
+            Name: req.body.name,
+            Branch: req.body.branch,
+            RegisterNumber: req.body.registernumber,
+            Year: req.body.year,
+            Phonenumber: req.body.phonenumber,
+            Email: req.body.email,
+            DOB: req.body.dob
+        });
+        res.json(result);
+    } catch (e) {
+        if (e.code === 11000) {
+            // Handle duplicate key error
+            res.status(400).json({ error: 'Duplicate key error', details: e.keyValue });
+        } else {
+            console.log(e);
+            res.status(500).json({ error: 'An error occurred', details: e });
+        }
+    }
+});
+
+app.post('/retrivedata', async (req, res) => {
+    try {
+        const details = await db.collection('student').findOne({ Email: req.body.email });
+        res.json(details);
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ error: 'An error occurred', details: error });
+    }
+});
+
+app.post("/retriveall", async (req, res) => {
+    try {
+        const details = await db.collection('student').find({ Year: req.body.year }).toArray();
+        res.json(details);
+    } catch (error) {
+        console.log("ERROR while retrieving entire data", error);
+        res.status(500).json({ error: 'An error occurred', details: error });
+    }
+});
+
+app.post("/attend", async (req, res) => {
+    try {
+        const details = await db.collection('student').find({ Year: req.body.year }).toArray();
+        res.json(details);
+    } catch (error) {
+        console.log("ERROR while retrieving entire data", error);
+        res.status(500).json({ error: 'An error occurred', details: error });
+    }
+});
+
+app.post('/update', async (req, res) => {
+    try {
+        const details = await db.collection('student').findOneAndUpdate({ Year: req.body.year }, { $set: { Year: '3' } });
+        res.json(details);
+    } catch (e) {
+        console.error(e);
+        res.status(500).json({ error: 'An error occurred', details: e });
+    }
+});
+
+app.post('/attendence', async (req, res) => {
+    try {
+        const result = await db.collection('attendence').insertOne({
+            Name: req.body.name,
+            Branch: req.body.branch,
+            RegisterNumber: req.body.registernumber,
+            Year: req.body.year
+        });
+        res.json(result);
+    } catch (e) {
+        console.log(e);
+        res.status(500).json({ error: 'An error occurred', details: e });
+    }
+});
+
+conToDb(() => {
+    app.listen(3000, () => {
+        console.log("Server running successfully");
+    });
+});
