@@ -1,30 +1,3 @@
-const Insert=async()=>{
-    try{
-        const insert=await fetch('/insertdata',{
-            method:'POST',
-            headers:{'content-type':'application/json'},
-            body:JSON.stringify({
-                name:document.getElementById('name').value,
-                branch:document.getElementById('branch').value,
-                registernumber:document.getElementById('regno').value,
-                year:document.getElementById('year').value,
-                phonenumber:document.getElementById('phone').value,
-                email:document.getElementById('email').value,
-                dob:document.getElementById('dob').value
-            })
-        })
-        const data=await insert.json()
-        if(data){
-            console.log(`data inserted successfully${data}`)
-        }
-        else{
-            console.log("error while inserting data")
-        }
-    }catch(error){
-        console.log(error)
-    }
-}
-
 const Retrive=async()=>{
     try{
         const retive=await fetch('/retrivedata',{

@@ -24,15 +24,15 @@ async function conToDb(cb) {
 }
 
 app.get('/', (req, res) => {
-    res.sendFile(__dirname + "/html/ASTproject.html");
+    res.sendFile(__dirname + "/public/html/ASTproject.html");
 });
 
 app.get("/attendence", (req, res) => {
-    res.sendFile(__dirname + "/html/attendence.html")
+    res.sendFile(__dirname + "/public/html/attendence.html")
 });
 
 app.get("/registration", (req,res) =>{
-    res.sendFile(__dirname + "/html/registration.html")
+    res.sendFile(__dirname + "/public/html/registration.html")
 });
 
 app.get("/stuvi", (req,res) => {
