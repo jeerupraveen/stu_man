@@ -2,28 +2,42 @@ const express = require('express');
 const { MongoClient } = require('mongodb');
 const path = require('path');
 const cors = require('cors');
+require('dotenv').config();
 
 const app = express();
 app.use(cors());
 app.use(express.json());
+app.use(express.static('public'))
 
 let db;
 async function conToDb(cb) {
-    const url = "mongodb+srv://Pra123veen:Pra123veen@praveen04.higkkwc.mongodb.net/?retryWrites=true&w=majority&appName=Praveen04";
+    const url = process.env.MONGOO_URL;
     const client = new MongoClient(url);
     await client.connect();
     db = client.db('praveen');
-    
+
     await db.collection('student').createIndex({ RegisterNumber: 1 }, { unique: true });
     await db.collection('student').createIndex({ Email: 1 }, { unique: true });
-    
-    await db.collection('attendence').createIndex({ RegisterNumber:1 }, { unique: true })
+
+    await db.collection('attendence').createIndex({ RegisterNumber: 1 }, { unique: true })
     cb();
 }
 
 app.get('/', (req, res) => {
-    res.json();
+    res.sendFile(__dirname + "/html/ASTproject.html");
 });
+
+app.get("/attendence", (req, res) => {
+    res.sendFile(__dirname + "/html/attendence.html")
+});
+
+app.get("/registration", (req,res) =>{
+    res.sendFile(__dirname + "/html/registration.html")
+});
+
+app.get("/stuvi", (req,res) => {
+    res.sendFile(__dirname + "/html/stuvi.html");
+})
 
 app.post('/insertdata', async (req, res) => {
     try {
@@ -41,10 +55,10 @@ app.post('/insertdata', async (req, res) => {
             Branch: req.body.branch,
             RegisterNumber: req.body.registernumber,
             Year: req.body.year,
-            Streak:0
+            Streak: 0
         });
         res.json({
-            message:'data inserted in two collections'
+            message: 'data inserted in two collections'
         });
     } catch (e) {
         if (e.code === 11000) {
@@ -94,58 +108,57 @@ app.post("/retDaAll", async (req, res) => {
         res.status(500).json({ error: 'An error occurred', details: error });
     }
 });
-app.post('/updateYear', async(req, res) => {
+app.post('/updateYear', async (req, res) => {
     try {
-        const details = await db.collection('student').updateMany({ Year:req.body.year },{$set:{Branch:req.body.branch}});
+        const details = await db.collection('student').updateMany({ Year: req.body.year }, { $set: { Branch: req.body.branch } });
         res.json(details);
     } catch (e) {
         console.error(e);
         res.status(500).json({ error: 'An error occurred', details: e });
     }
 });
-app.post('/delete',async(req,res)=>{
-    try{
-        const details= await db.collection('student').deleteOne({Email:req.body.email});
+app.post('/delete', async (req, res) => {
+    try {
+        const details = await db.collection('student').deleteOne({ Email: req.body.email });
         res.json(details)
     }
-    catch(err){
+    catch (err) {
         console.log(err)
     }
 })
-app.post('/attendinsert',async(req,res)=>{
-    try{
-        const details=await db.collection('attendence').findOne({RegisterNumber: req.body.registernumber});
-        if(!details)
-            {
-            const indata=await db.collection('attendence').insertOne({
-            Name: req.body.name,
-            Branch: req.body.branch,
-            RegisterNumber: req.body.registernumber,
-            Year: req.body.year,
-            Streak:req.body.streak
-        })
-        res.json({
-            message:'data inserted',
-            data:indata
-        })
-           }
-        else{
-            const udata=await db.collection('attendence').findOneAndUpdate({RegisterNumber: req.body.registernumber},{$set:{Streak:req.body.streak}})
+app.post('/attendinsert', async (req, res) => {
+    try {
+        const details = await db.collection('attendence').findOne({ RegisterNumber: req.body.registernumber });
+        if (!details) {
+            const indata = await db.collection('attendence').insertOne({
+                Name: req.body.name,
+                Branch: req.body.branch,
+                RegisterNumber: req.body.registernumber,
+                Year: req.body.year,
+                Streak: req.body.streak
+            })
+            res.json({
+                message: 'data inserted',
+                data: indata
+            })
+        }
+        else {
+            const udata = await db.collection('attendence').findOneAndUpdate({ RegisterNumber: req.body.registernumber }, { $set: { Streak: req.body.streak } })
             res.json(udata)
-        }}
-    catch(e){
-        if(e.code== 11000){
+        }
+    }
+    catch (e) {
+        if (e.code == 11000) {
             console.log(e.code)
             console.log("data already exicted")
         }
-        else
-        {
+        else {
             console.log(e)
         }
     }
 })
 conToDb(() => {
-    app.listen(3000, () => {
+    app.listen(process.env.PORT || 3000, () => {
         console.log("Server running successfully");
     });
 });
